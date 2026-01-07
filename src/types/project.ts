@@ -4,6 +4,6 @@ export type Project = {
     description: string;
     createdAt: string;
     taskCount: number;
-    StartDate: string;
-    EndDate: string;
+    startDate: string | null;
+    endDate: string | null;
 };

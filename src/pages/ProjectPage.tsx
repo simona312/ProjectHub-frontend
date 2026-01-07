@@ -2,12 +2,13 @@ import {useNavigate} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProjects } from "../sevices/projectService";
 import type { Project } from "../types/project";
+import {Folder, Inbox,  CheckSquare, CalendarCheck, Flag, } from "lucide-react";
 
 
 function formatDate(date?: string | null) {
   if (!date) return "—";
   // ако е ISO string, земи YYYY-MM-DD
-  return date.length >= 10 ? date.slice(0, 10) : date;
+  return new Date(date).toLocaleDateString();
 }
 
 export default function ProjectsPage() {
@@ -16,6 +17,7 @@ export default function ProjectsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [hoveredBadge, setHoveredBadge] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,8 +62,6 @@ export default function ProjectsPage() {
     borderRadius: 14,
     padding: 14,
     background: "white",
-
-   
     cursor: "pointer",
     transition: "box-shadow 0.2s ease, transform 0.2s ease",
   };
@@ -76,9 +76,10 @@ export default function ProjectsPage() {
 
   const nameStyle: React.CSSProperties = {
     margin: 0,
-    fontSize: 18,
-    fontWeight: 800,
+    fontSize: 20,
+    fontWeight: 900,
     lineHeight: 1.2,
+    marginBottom: 2
   };
 
   const idBadge: React.CSSProperties = {
@@ -92,9 +93,9 @@ export default function ProjectsPage() {
 
   const descStyle: React.CSSProperties = {
     margin: 0,
-    marginBottom: 12,
-    opacity: 0.8,
-    fontSize: 14,
+    marginBottom: 10,
+    opacity: 0.75,
+    fontSize: 13,
     lineHeight: 1.4,
   };
 
@@ -114,6 +115,11 @@ export default function ProjectsPage() {
     fontSize: 12,
     border: "1px solid #e5e7eb",
     background: "#f9fafb",
+    color : "#374151",
+    lineHeight: 1,
+    transition:"background 0.15s ease, transform 0.15s ease",
+    cursor: "default"
+
   };
 
   const emptyWrap: React.CSSProperties = {
@@ -159,7 +165,9 @@ export default function ProjectsPage() {
         <h1 style={titleStyle}>Projects</h1>
 
         <div style={emptyWrap}>
-          <h2 style={{ margin: 0, marginBottom: 6 }}>🗂️ No projects yet</h2>
+          <h2 style={{ margin: 0, marginBottom: 6, display: "flex", alignItems: "centar", gap: 8 }}>
+            <Inbox size= {18} style = {{opacity: 0.8}}/>
+            No projects yet</h2>
           <p style={{ margin: 0, opacity: 0.75 }}>
             Create your first project in Swagger / API, then refresh.
           </p>
@@ -219,6 +227,7 @@ export default function ProjectsPage() {
                   ? "0 10px 24px rgba(0,0,0,0.10)"
                   : "0 2px 6px rgba(0,0,0,0.05)",
                 transform: isHovered ? "translateY(-2px)" : "translateY(0)",
+                borderColor: isHovered ? "#c7d2fe" : "#e5e7eb"
               }}
             >
               <div style={cardHeader}>
@@ -231,13 +240,46 @@ export default function ProjectsPage() {
               <p style={descStyle}>{desc}</p>
 
               <div style={badgesRow}>
-                <span style={badgeStyle}>🧩 Tasks: {p.taskCount ?? 0}</span>
-                <span style={badgeStyle}>📅 Start: {formatDate(p.StartDate)}</span>
-                <span style={badgeStyle}>🏁 End: {formatDate(p.EndDate)}</span>
+                <span 
+                style={{
+                  ...badgeStyle,
+                  background: hoveredBadge === 'tasks-${p.id}' ? "#eef2ff" : badgeStyle.background,
+                  transform: hoveredBadge === 'tasks-${p.id}' ? "translateY(-1px)" : "translateY(0)",
+                }}
+                onMouseEnter={() => setHoveredBadge('tasks-${p.id')}
+                onMouseLeave={() => setHoveredBadge(null)}>
+                  <CheckSquare size ={14} style={{opacity: 0.8}}/>
+                  Tasks: {p.taskCount ?? 0}
+                </span>
+                <span style= {{...badgeStyle,
+                background:hoveredBadge === 'start-${p.id}' ? "#ecfeff" : badgeStyle.background,
+                transform: hoveredBadge === 'start-${p.id}' ? "translateY(-1px)" : "translateY(0)",
+                }}
+                onMouseEnter={()=> setHoveredBadge('start-${p.id')}
+                onMouseLeave={()=> setHoveredBadge(null)}
+                >
+                  <CalendarCheck size={14} style={{opacity:0.8}}/>
+                  Start: {formatDate(p.startDate)}
+
+                </span>
+                <span style={{ ...badgeStyle,
+                background:hoveredBadge === 'end-${p.id}' ? "#ecfeff" : badgeStyle.background,
+                transform: hoveredBadge === 'end-${p.id}' ? "translateY(-1px)" : "translateY(0)",
+                }}
+                onMouseEnter={()=> setHoveredBadge('end-${p.id')}
+                onMouseLeave={()=> setHoveredBadge(null)}
+                >
+                  <Flag size={14} style={{opacity: 0.8}}/>
+                  End: {formatDate(p.endDate)}
+                </span>
               </div>
 
-              <div style={{ marginTop: 10, opacity: 0.7, fontSize: 12 }}>
-                👉 Click to open details
+              <div style={{ marginTop: 10, opacity: 0.7, fontSize: 12,
+                display: "flex", alignItems: "center", gap: 6
+               }}>
+                <Folder size= {14} />
+                <span>Click to open details</span>
+              
               </div>
             </div>
           );

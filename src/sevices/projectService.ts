@@ -28,7 +28,7 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function getProjectById(id: number): Promise<Project> {
-    const res = await api.get<Project>('Project/${id}');
+    const res = await api.get<Project>(`Project/${id}`);
     return res.data;
 }
 
@@ -38,11 +38,11 @@ export async function createProject(data: CreateProjectRequest): Promise<Project
 }
 
 export async function updateProject(id: number, data: UpdateProjectRequest) :Promise<void> {
-    await api.put('Project/${id}', data);
+    await api.put(`Project/${id}`, data);
 }
 
 export async function deliteProject(id: number): Promise<void> {
-    await api.delete('Project/${id}');
+    await api.delete(`Project/${id}`);
 }
     
     
